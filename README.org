@@ -1,0 +1,33 @@
+#+TITLE: window-pulse
+#+AUTHOR: Miguel Guedes
+
+* Features
+
+Pulses the background of the active window when it gains focus, providing a subtle visual cue that helps you track which window is selected.
+
+- Handles both intra-frame window switches and inter-frame focus changes.
+- Does not pulse when returning from the minibuffer.
+- Suppresses the pulse when completion popups are active (Company, Corfu).
+- Adapts automatically to the current theme's background luminance.
+
+* Requirements
+
+Emacs 27.1 or later.
+
+* Installation
+
+#+begin_src emacs-lisp
+(package-vc-install "https://github.com/midsbie/window-pulse.git")
+#+end_src
+
+* Configuration
+
+All options are in the =pulse= customization group.
+
+- =window-pulse-background= :: Pulse color. A number (default =5=) shifts the background luminance by that many percentage points; a color string (e.g. ="#3a3a5c"=) is used verbatim.
+- =window-pulse-iterations= :: Number of animation steps (default =16=).
+- =window-pulse-delay= :: Seconds between steps (default =0.02=).
+
+* License
+
+Distributed under the MIT License. See [[file:LICENSE][LICENSE]] for details.
