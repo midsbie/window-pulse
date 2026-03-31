@@ -171,8 +171,19 @@ Does not pulse when returning from the minibuffer."
       (set-frame-parameter frame 'window-pulse--prev-focus t))
     (set-frame-parameter frame 'window-pulse--prev-focus nil)))
 
-(add-hook 'window-selection-change-functions #'window-pulse-on-selection-change)
-(add-function :after after-focus-change-function #'window-pulse-on-focus-change)
+;;;###autoload
+(define-minor-mode window-pulse-mode
+  "Toggle pulsing the active window on focus change.
+When enabled, switching windows or frames triggers a brief background
+pulse on the newly focused window."
+  :global t
+  :group 'pulse
+  (if window-pulse-mode
+      (progn
+        (add-hook 'window-selection-change-functions #'window-pulse-on-selection-change)
+        (add-function :after after-focus-change-function #'window-pulse-on-focus-change))
+    (remove-hook 'window-selection-change-functions #'window-pulse-on-selection-change)
+    (remove-function after-focus-change-function #'window-pulse-on-focus-change)))
 
 (provide 'window-pulse)
 

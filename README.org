@@ -18,6 +18,7 @@ Emacs 27.1 or later.
 
 #+begin_src emacs-lisp
 (package-vc-install "https://github.com/midsbie/window-pulse.git")
+(window-pulse-mode 1)
 #+end_src
 
 * Configuration
