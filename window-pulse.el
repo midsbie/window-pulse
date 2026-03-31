@@ -42,6 +42,10 @@
 
 (require 'color)
 
+(defgroup window-pulse nil
+  "Pulse the active window on selection change."
+  :group 'convenience)
+
 (defcustom window-pulse-background 5
   "Background color for the window pulse effect.
 If a number, compute the pulse color by shifting the `default' face
@@ -52,17 +56,17 @@ automatically to the current theme.
 If a color string (e.g. \"#3a3a5c\"), use it verbatim."
   :type '(choice (number :tag "Luminance shift (percentage points)")
                  (string :tag "Color"))
-  :group 'pulse)
+  :group 'window-pulse)
 
 (defcustom window-pulse-iterations 16
   "Number of iterations for the window pulse animation."
   :type 'integer
-  :group 'pulse)
+  :group 'window-pulse)
 
 (defcustom window-pulse-delay 0.02
   "Delay in seconds between pulse animation iterations."
   :type 'number
-  :group 'pulse)
+  :group 'window-pulse)
 
 (defvar-local window-pulse--cookie nil
   "Face remap cookie for the current pulse animation.")
