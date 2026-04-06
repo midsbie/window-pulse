@@ -172,15 +172,13 @@ Does not pulse when returning from the minibuffer."
 (defun window-pulse-on-focus-change ()
   "Pulse the selected window when a frame gains focus."
   (dolist (frame (frame-list))
-    (when (frame-focus-state frame)
-      (let ((prev (frame-parameter frame 'window-pulse--prev-focus))
-            (curr t))
-        (set-frame-parameter frame 'window-pulse--prev-focus curr)
-        (unless prev
-          (with-selected-window (frame-selected-window frame)
-            (window-pulse))))
-      (set-frame-parameter frame 'window-pulse--prev-focus t))
-    (set-frame-parameter frame 'window-pulse--prev-focus nil)))
+    (if (frame-focus-state frame)
+        (let ((prev (frame-parameter frame 'window-pulse--prev-focus)))
+          (set-frame-parameter frame 'window-pulse--prev-focus t)
+          (unless prev
+            (with-selected-window (frame-selected-window frame)
+              (window-pulse))))
+      (set-frame-parameter frame 'window-pulse--prev-focus nil))))
 
 ;;;###autoload
 (define-minor-mode window-pulse-mode
