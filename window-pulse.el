@@ -183,7 +183,7 @@ Does not pulse when returning from the minibuffer."
 When enabled, switching windows or frames triggers a brief background
 pulse on the newly focused window."
   :global t
-  :group 'pulse
+  :group 'window-pulse
   (if window-pulse-mode
       (progn
         (add-hook 'window-selection-change-functions #'window-pulse-on-selection-change)
