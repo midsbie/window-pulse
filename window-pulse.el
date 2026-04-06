@@ -75,7 +75,7 @@ If a color string (e.g. \"#3a3a5c\"), use it verbatim."
 (defvar-local window-pulse--timer nil
   "Timer for the current pulse animation.")
 
-(defun window-pulse-p ()
+(defun window-pulse--pulse-p ()
   "Return non-nil if the current window should be pulsed."
   (not (or (minibufferp)
            (bound-and-true-p company-candidates)
@@ -127,7 +127,7 @@ FRACTION is a float from 0.0 (returns FROM) to 1.0 (returns TO)."
 Remaps the `default' face background from the color specified by
 `window-pulse-background' to the original background over
 `window-pulse-iterations' steps."
-  (when (window-pulse-p)
+  (when (window-pulse--pulse-p)
     (window-pulse--cancel)
     (let* ((end-color   (window-pulse--default-background))
            (start-color (window-pulse--compute-color))
