@@ -90,13 +90,17 @@ If a color string (e.g. \"#3a3a5c\"), use it verbatim."
     (face-remap-remove-relative window-pulse--cookie)
     (setq window-pulse--cookie nil)))
 
+(defun window-pulse--default-background ()
+  "Return the current `default' face background color."
+  (or (face-background 'default nil t) "#000000"))
+
 (defun window-pulse--compute-color ()
   "Compute the pulse start color from `window-pulse-background'.
 When a number, shift the `default' face background luminance by that
 many percentage points.  When a string, return it as-is."
   (if (stringp window-pulse-background)
       window-pulse-background
-    (let* ((bg  (or (face-background 'default nil t) "#000000"))
+    (let* ((bg  (window-pulse--default-background))
            (rgb (color-name-to-rgb bg))
            (hsl (apply #'color-rgb-to-hsl rgb))
            (h   (nth 0 hsl))
@@ -125,7 +129,7 @@ Remaps the `default' face background from the color specified by
 `window-pulse-iterations' steps."
   (when (window-pulse-p)
     (window-pulse--cancel)
-    (let* ((end-color   (or (face-background 'default nil t) "#000000"))
+    (let* ((end-color   (window-pulse--default-background))
            (start-color (window-pulse--compute-color))
            (step        0)
            (steps       window-pulse-iterations)
