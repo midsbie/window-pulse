@@ -90,27 +90,24 @@ If a color string (e.g. \"#3a3a5c\"), use it verbatim."
     (face-remap-remove-relative window-pulse--cookie)
     (setq window-pulse--cookie nil)))
 
-(defun window-pulse--default-background ()
-  "Return the current `default' face background color."
-  (or (face-background 'default nil t) "#000000"))
-
 (defun window-pulse--compute-color ()
   "Compute the pulse start color from `window-pulse-background'.
 When a number, shift the `default' face background luminance by that
 many percentage points.  When a string, return it as-is."
   (if (stringp window-pulse-background)
       window-pulse-background
-    (let* ((bg  (window-pulse--default-background))
-           (rgb (color-name-to-rgb bg))
-           (hsl (apply #'color-rgb-to-hsl rgb))
-           (h   (nth 0 hsl))
-           (s   (nth 1 hsl))
-           (l   (nth 2 hsl))
-           (shift (/ (float window-pulse-background) 100.0))
-           (new-l (if (< l 0.5)
-                      (min 1.0 (+ l shift))
-                    (max 0.0 (- l shift)))))
-      (apply #'color-rgb-to-hex (color-hsl-to-rgb h s new-l)))))
+    (let ((bg (face-background 'default nil t)))
+      (when bg
+        (let* ((rgb (color-name-to-rgb bg))
+               (hsl (apply #'color-rgb-to-hsl rgb))
+               (h   (nth 0 hsl))
+               (s   (nth 1 hsl))
+               (l   (nth 2 hsl))
+               (shift (/ (float window-pulse-background) 100.0))
+               (new-l (if (< l 0.5)
+                          (min 1.0 (+ l shift))
+                        (max 0.0 (- l shift)))))
+          (apply #'color-rgb-to-hex (color-hsl-to-rgb h s new-l)))))))
 
 (defun window-pulse--interpolate-color (from to fraction)
   "Return a color FRACTION of the way between FROM and TO.
@@ -129,12 +126,12 @@ Remaps the `default' face background from the color specified by
 `window-pulse-iterations' steps."
   (when (window-pulse--pulse-p)
     (window-pulse--cancel)
-    (let* ((end-color   (window-pulse--default-background))
-           (start-color (window-pulse--compute-color))
+    (let* ((start-color (window-pulse--compute-color))
+           (end-color   (face-background 'default nil t))
            (step        0)
            (steps       window-pulse-iterations)
            (buf         (current-buffer)))
-      (when start-color
+      (when (and start-color end-color)
         (setq window-pulse--cookie
               (face-remap-add-relative 'default :background start-color))
         (let ((timer nil))
