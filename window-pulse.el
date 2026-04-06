@@ -132,24 +132,26 @@ Remaps the `default' face background from the color specified by
       (when start-color
         (setq window-pulse--cookie
               (face-remap-add-relative 'default :background start-color))
-        (setq window-pulse--timer
-              (run-with-timer
-               window-pulse-delay window-pulse-delay
-               (lambda ()
-                 (if (not (buffer-live-p buf))
-                     (cancel-timer window-pulse--timer)
-                   (with-current-buffer buf
-                     (setq step (1+ step))
-                     (if (>= step steps)
-                         (window-pulse--cancel)
-                       (let ((color (window-pulse--interpolate-color
-                                     start-color end-color
-                                     (/ (float step) steps))))
-                         (when color
-                           (face-remap-remove-relative window-pulse--cookie)
-                           (setq window-pulse--cookie
-                                 (face-remap-add-relative
-                                  'default :background color))))))))))))))
+        (let ((timer nil))
+          (setq timer
+                (run-with-timer
+                 window-pulse-delay window-pulse-delay
+                 (lambda ()
+                   (if (not (buffer-live-p buf))
+                       (cancel-timer timer)
+                     (with-current-buffer buf
+                       (setq step (1+ step))
+                       (if (>= step steps)
+                           (window-pulse--cancel)
+                         (let ((color (window-pulse--interpolate-color
+                                       start-color end-color
+                                       (/ (float step) steps))))
+                           (when color
+                             (face-remap-remove-relative window-pulse--cookie)
+                             (setq window-pulse--cookie
+                                   (face-remap-add-relative
+                                    'default :background color))))))))))
+          (setq window-pulse--timer timer))))))
 
 (defun window-pulse-on-selection-change (frame)
   "Pulse the selected window when it changes within FRAME.
